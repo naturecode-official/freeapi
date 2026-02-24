@@ -22,14 +22,15 @@
 ### Installation
 
 ```bash
-# Method 1: One-line install with curl (Recommended)
+# Method 1: One-line install from GitHub source (Recommended)
+# Installs from GitHub, CLI command: freeapi (no hyphen)
 curl -fsSL https://raw.githubusercontent.com/naturecode-official/freeapi/main/install-freeapi | bash
 
-# Method 2: Install globally from npm (published package)
+# Method 2: Install from npm (published package)
 # CLI command: free-api (with hyphen)
 npm install -g @cuijy/free-api
 
-# Method 3: From source (development version)
+# Method 3: Manual install from source
 # CLI command: freeapi (no hyphen)
 git clone https://github.com/naturecode-official/freeapi.git
 cd freeapi
@@ -40,18 +41,18 @@ npm link
 
 ### Get Started in 30 Seconds
 
-**Note**: Command differs based on installation method:
+**Important**: CLI command differs based on installation source:
 
 ```bash
-# If installed from npm (@cuijy/free-api):
-free-api init          # CLI command has hyphen
-free-api config chatgpt
-free-api chat chatgpt
-
-# If installed from source (development):
-freeapi init           # CLI command has no hyphen
+# If installed from GitHub (Method 1 & 2):
+freeapi init           # CLI command: freeapi (no hyphen)
 freeapi config chatgpt
 freeapi chat chatgpt
+
+# If installed from npm (Method 3):
+free-api init          # CLI command: free-api (with hyphen)
+free-api config chatgpt
+free-api chat chatgpt
 ```
 
 
@@ -252,21 +253,24 @@ npm link
 
 ## 📦 Installation Methods
 
-### Method 1: One-line curl install (Easiest)
+### Method 1: One-line install from GitHub (Easiest)
 ```bash
+# Installs from GitHub source, CLI: freeapi (no hyphen)
 curl -fsSL https://raw.githubusercontent.com/naturecode-official/freeapi/main/install-freeapi | bash
 ```
 
-### Method 2: npm (Recommended)
+### Method 2: Manual install from GitHub
 ```bash
-npm install -g @cuijy/free-api
-```
-
-### Method 3: From Source (git clone)
-```bash
+# CLI: freeapi (no hyphen)
 git clone https://github.com/naturecode-official/freeapi.git
 cd freeapi
 ./install-global.sh
+```
+
+### Method 3: Install from npm
+```bash
+# CLI: free-api (with hyphen)
+npm install -g @cuijy/free-api
 ```
 
 ### Method 4: Docker (Coming Soon)

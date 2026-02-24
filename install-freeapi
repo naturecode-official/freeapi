@@ -1,14 +1,14 @@
 #!/bin/bash
 
 # FreeAPI One-Click Installer
-# Installs the npm package: @cuijy/free-api
+# Installs from GitHub source (open source)
 # Usage: curl -fsSL https://raw.githubusercontent.com/naturecode-official/freeapi/main/install-freeapi | bash
 
 set -e
 
 echo "FreeAPI One-Click Installer"
 echo "==========================="
-echo "Installing: @cuijy/free-api (npm package)"
+echo "Installing from GitHub source (open source)"
 echo
 
 # Check Node.js
@@ -37,24 +37,49 @@ echo "   Node.js: v$NODE_VERSION"
 echo "   npm: $(npm --version)"
 echo
 
-# Install FreeAPI from npm
-echo "Installing @cuijy/free-api from npm..."
-echo "   Downloading package..."
-npm install -g @cuijy/free-api --silent
+# Download and install from GitHub
+echo "Downloading FreeAPI from GitHub..."
+TEMP_DIR=$(mktemp -d)
+
+if command -v git &> /dev/null; then
+    echo "   Cloning repository with git..."
+    git clone --depth 1 https://github.com/naturecode-official/freeapi.git "$TEMP_DIR/freeapi"
+else
+    echo "   Downloading with curl..."
+    curl -L https://github.com/naturecode-official/freeapi/archive/refs/heads/main.tar.gz -o "$TEMP_DIR/freeapi.tar.gz"
+    mkdir -p "$TEMP_DIR/freeapi"
+    tar -xzf "$TEMP_DIR/freeapi.tar.gz" -C "$TEMP_DIR/freeapi" --strip-components=1
+fi
+
+cd "$TEMP_DIR/freeapi"
+
+echo "   Installing dependencies..."
+npm install --silent
+
+echo "   Building project..."
+npm run build --silent
+
+echo "   Installing globally..."
+npm link --silent
+
+# Clean up
+cd ~
+rm -rf "$TEMP_DIR"
 
 echo
 echo "Installation complete!"
 echo
 echo "Usage:"
-echo "  free-api --help     Show help (note: command has hyphen)"
-echo "  free-api init       Initialize configuration"
-echo "  free-api list       List available services"
+echo "  freeapi --help     Show help (note: command has NO hyphen)"
+echo "  freeapi init       Initialize configuration"
+echo "  freeapi list       List available services"
 echo
 echo "Quick start:"
-echo "  1. free-api init"
-echo "  2. free-api config chatgpt"
-echo "  3. free-api chat chatgpt"
+echo "  1. freeapi init"
+echo "  2. freeapi config chatgpt"
+echo "  3. freeapi chat chatgpt"
 echo
-echo "Package: https://www.npmjs.com/package/@cuijy/free-api"
 echo "GitHub: https://github.com/naturecode-official/freeapi"
 echo "Issues: https://github.com/naturecode-official/freeapi/issues"
+echo
+echo "Note: Installed from GitHub source. CLI command is 'freeapi' (no hyphen)."
