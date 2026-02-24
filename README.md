@@ -22,30 +22,17 @@
 ### Installation
 
 ```bash
-# Install globally from npm (published package)
+# Method 1: One-line install with curl (Recommended)
+curl -fsSL https://raw.githubusercontent.com/naturecode-official/freeapi/main/install-freeapi | bash
+
+# Method 2: Install globally from npm (published package)
 # CLI command: free-api (with hyphen)
 npm install -g @cuijy/free-api
 
-# Or from source (development version)
+# Method 3: From source (development version)
 # CLI command: freeapi (no hyphen)
 git clone https://github.com/naturecode-official/freeapi.git
 cd freeapi
-npm install
-npm run build
-npm link
-
-# Alternative: Download with curl (no git required)
-curl -L -o freeapi-main.zip https://github.com/naturecode-official/freeapi/archive/refs/heads/main.zip
-unzip freeapi-main.zip
-cd freeapi-main
-npm install
-npm run build
-npm link
-
-# Or download specific release
-curl -L -o freeapi-v0.2.0.tar.gz https://github.com/naturecode-official/freeapi/archive/refs/tags/v0.2.0.tar.gz
-tar -xzf freeapi-v0.2.0.tar.gz
-cd freeapi-0.2.0
 npm install
 npm run build
 npm link
@@ -265,31 +252,21 @@ npm link
 
 ## 📦 Installation Methods
 
-### Method 1: npm (Recommended)
+### Method 1: One-line curl install (Easiest)
+```bash
+curl -fsSL https://raw.githubusercontent.com/naturecode-official/freeapi/main/install-freeapi | bash
+```
+
+### Method 2: npm (Recommended)
 ```bash
 npm install -g @cuijy/free-api
 ```
 
-### Method 2: From Source (git clone)
+### Method 3: From Source (git clone)
 ```bash
 git clone https://github.com/naturecode-official/freeapi.git
 cd freeapi
 ./install-global.sh
-```
-
-### Method 3: curl Download (no git required)
-```bash
-# Download latest main branch
-curl -L -o freeapi.zip https://github.com/naturecode-official/freeapi/archive/refs/heads/main.zip
-unzip freeapi.zip
-cd freeapi-main
-npm install && npm run build && npm link
-
-# Or download specific version
-curl -L -o freeapi.tar.gz https://github.com/naturecode-official/freeapi/archive/refs/tags/v0.2.0.tar.gz
-tar -xzf freeapi.tar.gz
-cd freeapi-0.2.0
-npm install && npm run build && npm link
 ```
 
 ### Method 4: Docker (Coming Soon)
