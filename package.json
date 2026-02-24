@@ -6,6 +6,12 @@
   "bin": {
     "freeapi": "bin/freeapi"
   },
+  "files": [
+    "dist",
+    "bin",
+    "LICENSE",
+    "README.github.md"
+  ],
   "scripts": {
     "build": "tsc",
     "dev": "tsc --watch",

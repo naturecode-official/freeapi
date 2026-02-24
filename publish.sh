@@ -18,9 +18,18 @@ npm run build
 
 case $TARGET in
   "npm")
+    echo "准备 npm 发布文件..."
+    # 复制 npm 专用的 README
+    cp README.npm.md README.md
+    
     echo "发布到 npm (@cuijy/free-api)..."
     npm publish --access public
+    
+    # 恢复原来的 README
+    cp README.github.md README.md 2>/dev/null || true
+    
     echo "✅ 已发布到 npm: @cuijy/free-api"
+    echo "📦 包地址: https://www.npmjs.com/package/@cuijy/free-api"
     ;;
   "github")
     echo "GitHub 版本不发布到 npm，仅用于开发"

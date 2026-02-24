@@ -1,6 +1,6 @@
 {
   "name": "@cuijy/free-api",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "A tool that runs multiple AI web-based free chat services in the background",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -11,7 +11,7 @@
     "dist",
     "bin",
     "LICENSE",
-    "README.md"
+    "README.npm.md"
   ],
   "scripts": {
     "build": "tsc",
@@ -76,12 +76,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/cuijy/free-api.git"
+    "url": "git+https://github.com/naturecode-official/freeapi.git"
   },
   "bugs": {
-    "url": "https://github.com/cuijy/free-api/issues"
+    "url": "https://github.com/naturecode-official/freeapi/issues"
   },
-  "homepage": "https://github.com/cuijy/free-api#readme",
+  "homepage": "https://www.npmjs.com/package/@cuijy/free-api",
   "directories": {
     "doc": "docs",
     "example": "examples",
