@@ -4,7 +4,7 @@
   "description": "A tool that runs multiple AI web-based free chat services in the background",
   "main": "dist/index.js",
   "bin": {
-    "freeapi": "./bin/freeapi"
+    "freeapi": "bin/freeapi"
   },
   "scripts": {
     "build": "tsc",
@@ -65,10 +65,16 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/yourusername/freeapi.git"
+    "url": "git+https://github.com/yourusername/freeapi.git"
   },
   "bugs": {
     "url": "https://github.com/yourusername/freeapi/issues"
   },
-  "homepage": "https://github.com/yourusername/freeapi#readme"
+  "homepage": "https://github.com/yourusername/freeapi#readme",
+  "directories": {
+    "doc": "docs",
+    "example": "examples",
+    "test": "tests"
+  },
+  "type": "commonjs"
 }
