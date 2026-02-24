@@ -2,9 +2,7 @@ import { Command } from 'commander';
 import chalk from 'chalk';
 import ora from 'ora';
 import inquirer from 'inquirer';
-import fs from 'fs-extra';
-import path from 'path';
-import os from 'os';
+import { configManager } from '../../utils/config';
 
 export function initCommand(): Command {
   const command = new Command('init')
@@ -14,11 +12,10 @@ export function initCommand(): Command {
       const spinner = ora('Initializing FreeAPI...').start();
       
       try {
-        const configDir = path.join(os.homedir(), '.freeapi');
-        const configFile = path.join(configDir, 'config.yaml');
-        
         // Check if already initialized
-        if (await fs.pathExists(configFile) && !options.force) {
+        const configDir = configManager.getConfigDir();
+        
+        if (await import('fs-extra').then(fs => fs.pathExists(configDir)) && !options.force) {
           spinner.warn('FreeAPI is already initialized.');
           
           const { confirm } = await inquirer.prompt([
@@ -36,100 +33,47 @@ export function initCommand(): Command {
           }
         }
         
-        // Create directories
-        spinner.text = 'Creating directories...';
-        await fs.ensureDir(configDir);
-        await fs.ensureDir(path.join(configDir, 'services'));
-        await fs.ensureDir(path.join(configDir, 'sessions'));
-        await fs.ensureDir(path.join(configDir, 'logs'));
-        await fs.ensureDir(path.join(configDir, 'data'));
-        await fs.ensureDir(path.join(configDir, 'cache'));
+        // Initialize configuration
+        spinner.text = 'Creating directories and configuration...';
+        await configManager.initialize();
         
-        // Create default configuration
-        spinner.text = 'Creating default configuration...';
-        const defaultConfig = {
-          version: '1.0',
-          log_level: 'info',
-          log_file: path.join(configDir, 'logs', 'freeapi.log'),
-          data_dir: path.join(configDir, 'data'),
-          cache_dir: path.join(configDir, 'cache'),
-          services: {
-            enabled: ['chatgpt_web', 'deepseek', 'wenxin'],
-            default: 'chatgpt_web',
-          },
-          browser: {
-            headless: true,
-            timeout: 30000,
-            user_agent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)',
-          },
-        };
+        // Create default ChatGPT configuration
+        spinner.text = 'Creating default service configurations...';
         
-        await fs.writeJson(path.join(configDir, 'config.json'), defaultConfig, { spaces: 2 });
-        
-        // Create service templates
-        spinner.text = 'Creating service templates...';
-        
-        const chatgptConfig = {
-          name: 'chatgpt_web',
-          type: 'browser',
-          enabled: false,
-          credentials: {
-            email: '',
-            password: '',
-          },
-          browser: {
-            executable_path: 'auto',
-            args: ['--no-sandbox', '--disable-dev-shm-usage'],
-          },
-          session: {
-            keep_alive: true,
-            refresh_interval: 3600,
-            max_retries: 3,
-          },
-        };
-        
-        const deepseekConfig = {
-          name: 'deepseek',
+        const defaultChatGPTConfig = {
+          name: 'chatgpt',
           type: 'api',
-          enabled: false,
-          api_key: '',
-          endpoint: 'https://api.deepseek.com',
-          model: 'deepseek-chat',
+          enabled: true,
+          mode: 'public',
+          base_url: 'https://api.openai.com/v1/',
+          model: 'gpt-3.5-turbo',
           max_tokens: 4096,
           temperature: 0.7,
+          timeout: 30000,
+          max_retries: 3
         };
         
-        await fs.writeJson(
-          path.join(configDir, 'services', 'chatgpt_web.json'),
-          chatgptConfig,
-          { spaces: 2 }
-        );
-        
-        await fs.writeJson(
-          path.join(configDir, 'services', 'deepseek.json'),
-          deepseekConfig,
-          { spaces: 2 }
-        );
-        
-        await fs.writeJson(
-          path.join(configDir, 'services', 'wenxin.json'),
-          { name: 'wenxin', type: 'api', enabled: false, api_key: '' },
-          { spaces: 2 }
-        );
+        await configManager.saveServiceConfig('chatgpt', defaultChatGPTConfig);
         
         spinner.succeed(chalk.green('FreeAPI initialized successfully!'));
         
         console.log();
-        console.log(chalk.yellow('Next steps:'));
-        console.log('1. Configure services:');
-        console.log('   ' + chalk.cyan('freeapi config chatgpt_web'));
-        console.log('   ' + chalk.cyan('freeapi config deepseek'));
-        console.log('2. Start a service:');
-        console.log('   ' + chalk.cyan('freeapi start chatgpt_web'));
-        console.log('3. Start interactive chat:');
-        console.log('   ' + chalk.cyan('freeapi chat chatgpt_web'));
+        console.log(chalk.blue.bold('🎉 FreeAPI is ready to use!'));
+        console.log();
+        console.log(chalk.yellow('📋 Available commands:'));
+        console.log(`  ${chalk.cyan('freeapi list')}           - List available services`);
+        console.log(`  ${chalk.cyan('freeapi config chatgpt')} - Configure ChatGPT service`);
+        console.log(`  ${chalk.cyan('freeapi start chatgpt')}  - Start ChatGPT service`);
+        console.log(`  ${chalk.cyan('freeapi chat chatgpt')}   - Interactive chat with ChatGPT`);
+        console.log(`  ${chalk.cyan('freeapi status')}         - Check service status`);
+        console.log(`  ${chalk.cyan('freeapi --help')}         - Show all commands`);
+        console.log();
+        console.log(chalk.yellow('🚀 Quick start with ChatGPT:'));
+        console.log(`  1. ${chalk.cyan('freeapi config chatgpt')} - Configure with your API key`);
+        console.log(`  2. ${chalk.cyan('freeapi chat chatgpt')}   - Start chatting!`);
         console.log();
         console.log(chalk.gray('Configuration directory: ') + chalk.cyan(configDir));
+        console.log(chalk.gray('Run ') + chalk.cyan('freeapi --help') + chalk.gray(' for more information.'));
         
       } catch (error) {
         spinner.fail(chalk.red('Initialization failed:'));

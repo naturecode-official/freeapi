@@ -39,61 +39,99 @@ export function configCommand(): Command {
         // Determine service type and configuration questions
         let questions: any[] = [];
         
-        if (serviceName === 'chatgpt_web') {
-          questions = [
-            {
-              type: 'confirm',
-              name: 'enabled',
-              message: 'Enable ChatGPT Web service?',
-              default: serviceConfig.enabled || false,
-            },
-            {
-              type: 'input',
-              name: 'credentials.email',
-              message: 'ChatGPT email:',
-              default: serviceConfig.credentials?.email || '',
-              when: (answers: any) => answers.enabled,
-              validate: (input: string) => {
-                if (!input.includes('@')) {
-                  return 'Please enter a valid email address';
-                }
-                return true;
+        if (serviceName === 'chatgpt' || serviceName === 'chatgpt_web') {
+          // Use ChatGPT configuration wizard
+          spinner.stop();
+          console.log(chalk.blue.bold(`Configuring ${serviceName} Service`));
+          console.log(chalk.gray('Launching ChatGPT configuration wizard...'));
+          console.log();
+          
+          try {
+            // Import and run ChatGPT config wizard
+            const { runConfigWizard } = await import('../../services/chatgpt/exports');
+            await runConfigWizard();
+            
+            console.log();
+            console.log(chalk.green(`${serviceName} configured successfully!`));
+            console.log();
+            console.log(chalk.yellow('Next steps:'));
+            console.log(`  ${chalk.cyan(`freeapi start ${serviceName}`)} - Start the service`);
+            console.log(`  ${chalk.cyan(`freeapi chat ${serviceName}`)} - Start interactive chat`);
+            console.log(`  ${chalk.cyan(`freeapi status`)} - Check service status`);
+            
+            return;
+          } catch (error) {
+            spinner.fail(chalk.red('ChatGPT configuration failed:'));
+            console.error(chalk.red(error instanceof Error ? error.message : String(error)));
+            
+            // Fall back to manual configuration
+            console.log(chalk.yellow('\nFalling back to manual configuration...'));
+            spinner.start();
+            
+            questions = [
+              {
+                type: 'confirm',
+                name: 'enabled',
+                message: 'Enable ChatGPT service?',
+                default: serviceConfig.enabled || false,
               },
-            },
-            {
-              type: 'password',
-              name: 'credentials.password',
-              message: 'ChatGPT password:',
-              mask: '*',
-              when: (answers: any) => answers.enabled && answers.credentials?.email,
-              validate: (input: string) => {
-                if (input.length < 6) {
-                  return 'Password must be at least 6 characters';
-                }
-                return true;
+              {
+                type: 'list',
+                name: 'mode',
+                message: 'Select authentication mode:',
+                choices: [
+                  { name: 'Public Mode (No API key, limited)', value: 'public' },
+                  { name: 'Authenticated Mode (API key required)', value: 'authenticated' }
+                ],
+                default: serviceConfig.mode || 'public',
+                when: (answers: any) => answers.enabled,
               },
-            },
-            {
-              type: 'confirm',
-              name: 'browser.headless',
-              message: 'Run browser in headless mode?',
-              default: serviceConfig.browser?.headless ?? true,
-              when: (answers: any) => answers.enabled,
-            },
-            {
-              type: 'number',
-              name: 'session.refresh_interval',
-              message: 'Session refresh interval (seconds):',
-              default: serviceConfig.session?.refresh_interval || 3600,
-              when: (answers: any) => answers.enabled,
-              validate: (input: number) => {
-                if (input < 60) {
-                  return 'Refresh interval must be at least 60 seconds';
-                }
-                return true;
+              {
+                type: 'password',
+                name: 'api_key',
+                message: 'OpenAI API Key (sk-...):',
+                mask: '*',
+                when: (answers: any) => answers.enabled && answers.mode === 'authenticated',
+                validate: (input: string) => {
+                  if (!input.trim()) {
+                    return 'API Key is required for authenticated mode';
+                  }
+                  if (!input.startsWith('sk-')) {
+                    return 'API Key should start with "sk-"';
+                  }
+                  return true;
+                },
               },
-            },
-          ];
+              {
+                type: 'input',
+                name: 'base_url',
+                message: 'API Base URL:',
+                default: serviceConfig.base_url || 'https://api.openai.com/v1/',
+                when: (answers: any) => answers.enabled,
+                validate: (input: string) => {
+                  try {
+                    new URL(input);
+                    return true;
+                  } catch {
+                    return 'Please enter a valid URL';
+                  }
+                },
+              },
+              {
+                type: 'list',
+                name: 'model',
+                message: 'Default model:',
+                choices: [
+                  { name: 'GPT-3.5 Turbo (Fast, cost-effective)', value: 'gpt-3.5-turbo' },
+                  { name: 'GPT-3.5 Turbo 16K (Longer context)', value: 'gpt-3.5-turbo-16k' },
+                  { name: 'GPT-4 (Most capable)', value: 'gpt-4' },
+                  { name: 'GPT-4 Turbo (Latest GPT-4)', value: 'gpt-4-turbo-preview' }
+                ],
+                default: serviceConfig.model || 'gpt-3.5-turbo',
+                when: (answers: any) => answers.enabled,
+              },
+            ];
+          }
         } else if (serviceName === 'deepseek') {
           questions = [
             {

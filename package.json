@@ -3,9 +3,19 @@
   "version": "0.1.0",
   "description": "A tool that runs multiple AI web-based free chat services in the background",
   "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "bin": {
     "freeapi": "bin/freeapi"
   },
+  "files": [
+    "dist",
+    "bin",
+    "src",
+    "docs",
+    "LICENSE",
+    "README.md",
+    "QUICKSTART.md"
+  ],
   "scripts": {
     "build": "tsc",
     "dev": "tsc --watch",
@@ -26,9 +36,13 @@
     "api",
     "cli",
     "chatgpt",
+    "openai",
     "deepseek",
     "wenxin",
-    "qwen"
+    "qwen",
+    "llm",
+    "chatbot",
+    "assistant"
   ],
   "author": "",
   "license": "MIT",
@@ -65,12 +79,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/yourusername/freeapi.git"
+    "url": "git+https://github.com/naturecode-official/freeapi.git"
   },
   "bugs": {
-    "url": "https://github.com/yourusername/freeapi/issues"
+    "url": "https://github.com/naturecode-official/freeapi/issues"
   },
-  "homepage": "https://github.com/yourusername/freeapi#readme",
+  "homepage": "https://github.com/naturecode-official/freeapi#readme",
   "directories": {
     "doc": "docs",
     "example": "examples",

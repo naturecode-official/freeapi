@@ -1,16 +1,14 @@
 import { Command } from 'commander';
 import chalk from 'chalk';
 import ora from 'ora';
-import fs from 'fs-extra';
-import path from 'path';
-import os from 'os';
+import { configManager } from '../../utils/config';
 
 interface ServiceInfo {
   name: string;
-  type: 'browser' | 'api';
+  type: 'api' | 'browser';
   enabled: boolean;
   configured: boolean;
-  status?: 'running' | 'stopped' | 'error';
+  description?: string;
 }
 
 export function listCommand(): Command {
@@ -21,60 +19,48 @@ export function listCommand(): Command {
       const spinner = ora('Loading services...').start();
       
       try {
-        const configDir = path.join(os.homedir(), '.freeapi');
-        const servicesDir = path.join(configDir, 'services');
+        // Get configured services
+        const configuredServices = await configManager.listServices();
         
-        // Check if initialized
-        if (!(await fs.pathExists(configDir))) {
-          spinner.fail('FreeAPI is not initialized.');
-          console.log(chalk.yellow('Run "freeapi init" to initialize.'));
-          return;
-        }
-        
-        // Get all service files
-        let serviceFiles: string[] = [];
-        if (await fs.pathExists(servicesDir)) {
-          serviceFiles = (await fs.readdir(servicesDir))
-            .filter(file => file.endsWith('.json'))
-            .map(file => path.basename(file, '.json'));
-        }
-        
-        // If no service files, show default services
-        if (serviceFiles.length === 0) {
-          serviceFiles = ['chatgpt_web', 'deepseek', 'wenxin', 'qwen'];
-        }
+        // Default available services
+        const defaultServices = [
+          { name: 'chatgpt', type: 'api' as const, description: 'OpenAI ChatGPT API service' },
+          { name: 'deepseek', type: 'api' as const, description: 'DeepSeek AI API service' },
+          { name: 'wenxin', type: 'api' as const, description: 'Wenxin (文心) AI service' },
+          { name: 'qwen', type: 'api' as const, description: 'Qwen (通义千问) AI service' }
+        ];
         
         // Load service information
         const services: ServiceInfo[] = [];
         
-        for (const serviceName of serviceFiles) {
-          const serviceFile = path.join(servicesDir, `${serviceName}.json`);
+        for (const defaultService of defaultServices) {
+          const isConfigured = configuredServices.includes(defaultService.name);
           let serviceConfig: any = {};
-          let configured = false;
+          let enabled = false;
           
-          if (await fs.pathExists(serviceFile)) {
+          if (isConfigured) {
             try {
-              serviceConfig = await fs.readJson(serviceFile);
-              configured = true;
+              serviceConfig = await configManager.getServiceConfig(defaultService.name);
+              enabled = serviceConfig?.enabled || false;
             } catch (error) {
-              // Ignore invalid JSON
+              // Ignore errors
             }
           }
           
           services.push({
-            name: serviceName,
-            type: serviceConfig.type || 'api',
-            enabled: serviceConfig.enabled || false,
-            configured,
-            status: 'stopped', // TODO: Implement status checking
+            name: defaultService.name,
+            type: defaultService.type,
+            enabled,
+            configured: isConfigured,
+            description: defaultService.description
           });
         }
         
         spinner.stop();
         
         // Display services
-        console.log(chalk.blue.bold('Available AI Services'));
-        console.log(chalk.gray('='.repeat(50)));
+        console.log(chalk.blue.bold('🤖 FreeAPI - Available AI Services'));
+        console.log(chalk.gray('='.repeat(60)));
         console.log();
         
         const filteredServices = options.all 
@@ -83,56 +69,52 @@ export function listCommand(): Command {
         
         if (filteredServices.length === 0) {
           console.log(chalk.yellow('No services available.'));
-          console.log(chalk.gray('Run "freeapi init" to create service templates.'));
+          console.log(chalk.gray('Run "freeapi init" to initialize configuration.'));
           return;
         }
         
-        // Group services by type
-        const browserServices = filteredServices.filter(s => s.type === 'browser');
-        const apiServices = filteredServices.filter(s => s.type === 'api');
+        // Display services table
+        console.log(chalk.yellow('📋 Service List:'));
+        console.log(chalk.gray('-'.repeat(60)));
         
-        if (browserServices.length > 0) {
-          console.log(chalk.yellow('Browser-based Services:'));
-          console.log(chalk.gray('-'.repeat(40)));
-          browserServices.forEach(service => {
-            const statusIcon = service.enabled ? chalk.green('✓') : chalk.red('✗');
-            const configuredIcon = service.configured ? chalk.green('✓') : chalk.yellow('○');
-            const statusText = service.status === 'running' ? chalk.green('running') : chalk.gray('stopped');
-            
-            console.log(`  ${statusIcon} ${chalk.cyan(service.name.padEnd(15))} ` +
-              `[${configuredIcon} configured] [${statusText}]`);
-          });
+        filteredServices.forEach(service => {
+          const statusIcon = service.enabled ? chalk.green('●') : chalk.red('○');
+          const configuredIcon = service.configured ? chalk.green('✓') : chalk.yellow('○');
+          const typeIcon = service.type === 'api' ? '🔌' : '🌐';
+          
+          console.log(`  ${statusIcon} ${chalk.cyan(service.name.padEnd(12))} ` +
+            `${typeIcon} ${service.description || ''}`);
+          console.log(`    ${chalk.gray('Status:')} ${service.enabled ? chalk.green('Enabled') : chalk.red('Disabled')} ` +
+            `${chalk.gray('Configured:')} ${configuredIcon}`);
           console.log();
-        }
-        
-        if (apiServices.length > 0) {
-          console.log(chalk.yellow('API-based Services:'));
-          console.log(chalk.gray('-'.repeat(40)));
-          apiServices.forEach(service => {
-            const statusIcon = service.enabled ? chalk.green('✓') : chalk.red('✗');
-            const configuredIcon = service.configured ? chalk.green('✓') : chalk.yellow('○');
-            const statusText = service.status === 'running' ? chalk.green('running') : chalk.gray('stopped');
-            
-            console.log(`  ${statusIcon} ${chalk.cyan(service.name.padEnd(15))} ` +
-              `[${configuredIcon} configured] [${statusText}]`);
-          });
-          console.log();
-        }
+        });
         
         // Show legend
         console.log(chalk.gray('Legend:'));
-        console.log(`  ${chalk.green('✓')} Enabled  ${chalk.red('✗')} Disabled  ${chalk.yellow('○')} Not configured`);
+        console.log(`  ${chalk.green('●')} Enabled  ${chalk.red('○')} Disabled  ${chalk.green('✓')} Configured  ${chalk.yellow('○')} Not configured`);
+        console.log(`  ${'🔌'} API Service  ${'🌐'} Browser Service`);
         console.log();
         
         // Show commands
-        console.log(chalk.yellow('Commands:'));
-        console.log(`  ${chalk.cyan('freeapi config <service>')} - Configure a service`);
-        console.log(`  ${chalk.cyan('freeapi start <service>')} - Start a service`);
-        console.log(`  ${chalk.cyan('freeapi chat <service>')} - Interactive chat`);
+        console.log(chalk.yellow('🚀 Quick Commands:'));
+        console.log(`  ${chalk.cyan('freeapi config chatgpt')}    - Configure ChatGPT service`);
+        console.log(`  ${chalk.cyan('freeapi start chatgpt')}     - Start ChatGPT service`);
+        console.log(`  ${chalk.cyan('freeapi chat chatgpt')}      - Interactive chat with ChatGPT`);
+        console.log(`  ${chalk.cyan('freeapi status')}            - Check service status`);
         console.log();
         
+        // Show ChatGPT specific info
+        const chatGPTConfig = await configManager.getServiceConfig('chatgpt');
+        if (chatGPTConfig) {
+          console.log(chalk.yellow('💡 ChatGPT Status:'));
+          console.log(`  Mode: ${chalk.cyan(chatGPTConfig.mode || 'public')}`);
+          console.log(`  Model: ${chalk.cyan(chatGPTConfig.model || 'gpt-3.5-turbo')}`);
+          console.log(`  API Key: ${chatGPTConfig.api_key ? chalk.green('Configured') : chalk.yellow('Not configured')}`);
+          console.log();
+        }
+        
         if (!options.all) {
-          console.log(chalk.gray('Use --all flag to show disabled services.'));
+          console.log(chalk.gray('Use ') + chalk.cyan('--all') + chalk.gray(' flag to show all services.'));
         }
         
       } catch (error) {
