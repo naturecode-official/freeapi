@@ -1,0 +1,79 @@
+#!/bin/bash
+
+# FreeAPI One-Click Installer
+# Usage: curl -fsSL https://raw.githubusercontent.com/naturecode-official/freeapi/main/install-freeapi | bash
+
+set -e
+
+echo "FreeAPI One-Click Installer"
+echo "==========================="
+echo
+
+# Check Node.js
+if ! command -v node &> /dev/null; then
+    echo "ERROR: Node.js not detected"
+    echo "Please install Node.js v18+: https://nodejs.org/"
+    exit 1
+fi
+
+# Check npm
+if ! command -v npm &> /dev/null; then
+    echo "ERROR: npm not detected"
+    exit 1
+fi
+
+# Check Node.js version
+NODE_VERSION=$(node --version | cut -d'v' -f2)
+MAJOR_VERSION=$(echo $NODE_VERSION | cut -d'.' -f1)
+if [ "$MAJOR_VERSION" -lt 18 ]; then
+    echo "ERROR: Node.js version too low (requires v18+, found v$NODE_VERSION)"
+    exit 1
+fi
+
+echo "System check passed"
+echo "   Node.js: v$NODE_VERSION"
+echo "   npm: $(npm --version)"
+echo
+
+# Install FreeAPI
+echo "Installing FreeAPI..."
+if command -v git &> /dev/null; then
+    echo "   Cloning repository with git..."
+    git clone --depth 1 https://github.com/naturecode-official/freeapi.git /tmp/freeapi-install
+    cd /tmp/freeapi-install
+else
+    echo "   Downloading with curl..."
+    curl -L https://github.com/naturecode-official/freeapi/archive/refs/heads/main.tar.gz -o /tmp/freeapi.tar.gz
+    mkdir -p /tmp/freeapi-install
+    tar -xzf /tmp/freeapi.tar.gz -C /tmp/freeapi-install --strip-components=1
+    cd /tmp/freeapi-install
+fi
+
+echo "   Installing dependencies..."
+npm install --silent
+
+echo "   Building project..."
+npm run build --silent
+
+echo "   Installing globally..."
+npm link --silent
+
+# Clean up
+cd ~
+rm -rf /tmp/freeapi-install /tmp/freeapi.tar.gz 2>/dev/null || true
+
+echo
+echo "Installation complete!"
+echo
+echo "Usage:"
+echo "  freeapi --help     Show help"
+echo "  freeapi init       Initialize configuration"
+echo "  freeapi list       List available services"
+echo
+echo "Quick start:"
+echo "  1. freeapi init"
+echo "  2. freeapi config chatgpt_web"
+echo "  3. freeapi chat chatgpt_web"
+echo
+echo "Documentation: https://github.com/naturecode-official/freeapi"
+echo "Issues: https://github.com/naturecode-official/freeapi/issues"

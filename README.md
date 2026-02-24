@@ -16,6 +16,18 @@ A tool that runs multiple AI web-based free chat services in the background, pro
 - Node.js 18 or higher
 - npm or yarn
 
+### One-click Installation (Recommended)
+
+#### macOS / Linux
+```bash
+curl -fsSL https://raw.githubusercontent.com/naturecode-official/freeapi/main/install-freeapi | bash
+```
+
+#### Windows
+```powershell
+PowerShell -ExecutionPolicy Bypass -Command "irm https://raw.githubusercontent.com/naturecode-official/freeapi/main/install.ps1 | iex"
+```
+
 ### Install from npm (Coming soon)
 ```bash
 npm install -g freeapi
@@ -24,6 +36,18 @@ npm install -g freeapi
 ### Install from source
 ```bash
 git clone https://github.com/naturecode-official/freeapi.git
+cd freeapi
+npm install
+npm run build
+npm link
+```
+
+### Other Methods
+See [INSTALLATION.md](INSTALLATION.md) for more installation options.
+
+### Install from source
+```bash
+git clone https://github.com/naturecode-official/freeeapi.git
 cd freeapi
 npm install
 npm run build
@@ -190,6 +214,6 @@ MIT License - see [LICENSE](LICENSE) file for details.
 
 ## Support
 
-- Issues: [GitHub Issues](https://github.com/naturecode-official/freeapi/issues)
-- Documentation: [GitHub Wiki](https://github.com/naturecode-official/freeapi/wiki)
-- Discussions: [GitHub Discussions](https://github.com/naturecode-official/freeapi/discussions)
+- Issues: [GitHub Issues](https://github.com/naturecode-official/freeeapi/issues)
+- Documentation: [GitHub Wiki](https://github.com/naturecode-official/freeeapi/wiki)
+- Discussions: [GitHub Discussions](https://github.com/naturecode-official/freeeapi/discussions)
