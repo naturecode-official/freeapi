@@ -1,7 +1,6 @@
 import { Command } from 'commander';
 import chalk from 'chalk';
-import ora from 'ora';
-import inquirer from 'inquirer';
+// import inquirer from 'inquirer';
 
 export function stopCommand(): Command {
   const command = new Command('stop')
@@ -9,13 +8,13 @@ export function stopCommand(): Command {
     .option('-a, --all', 'Stop all services', false)
     .argument('[service]', 'Service name to stop (optional)')
     .action(async (serviceName, options) => {
-      const spinner = ora('Stopping services...').start();
+       // const spinner = ora('Stopping services...').start();
       
       try {
         // TODO: Implement service stopping logic
         await new Promise(resolve => setTimeout(resolve, 800));
         
-        spinner.stop();
+         // spinner.stop();
         
         if (serviceName) {
           console.log(chalk.blue.bold(`Stopping ${serviceName}`));
@@ -44,8 +43,9 @@ export function stopCommand(): Command {
         
         console.log(chalk.gray('Service lifecycle management will be implemented in Phase 2.'));
         
-      } catch (error) {
-        spinner.fail(chalk.red('Failed to stop services:'));
+       } catch (error) {
+        // spinner.fail(chalk.red('Failed to stop services:'));
+        console.error(chalk.red('Failed to stop services:'));
         console.error(chalk.red(error instanceof Error ? error.message : String(error)));
         process.exit(1);
       }
