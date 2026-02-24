@@ -23,7 +23,7 @@ npm install -g freeapi
 
 ### Install from source
 ```bash
-git clone https://github.com/yourusername/freeapi.git
+git clone https://github.com/naturecode-official/freeapi.git
 cd freeapi
 npm install
 npm run build
@@ -180,12 +180,16 @@ freeapi/
 4. Add tests for new features
 5. Submit a pull request
 
+## Author
+
+- **naturecode-official** - [GitHub](https://github.com/naturecode-official)
+
 ## License
 
 MIT License - see [LICENSE](LICENSE) file for details.
 
 ## Support
 
-- Issues: [GitHub Issues](https://github.com/yourusername/freeapi/issues)
-- Documentation: [GitHub Wiki](https://github.com/yourusername/freeapi/wiki)
-- Discussions: [GitHub Discussions](https://github.com/yourusername/freeapi/discussions)
+- Issues: [GitHub Issues](https://github.com/naturecode-official/freeapi/issues)
+- Documentation: [GitHub Wiki](https://github.com/naturecode-official/freeapi/wiki)
+- Discussions: [GitHub Discussions](https://github.com/naturecode-official/freeapi/discussions)
