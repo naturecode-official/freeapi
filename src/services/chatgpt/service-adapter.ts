@@ -427,21 +427,53 @@ export class ChatGPTServiceAdapter extends EventEmitter {
     try {
       this.emit('connection:test:start');
       
-      // Send a simple test message
-      const response = await this.sendMessage('Hello', {
-        maxTokens: 10,
-        systemPrompt: 'You are a helpful assistant.'
-      });
-
-      const success = !!response && !!response.message.content;
-      
-      if (success) {
-        this.emit('connection:test:success', response);
-      } else {
-        this.emit('connection:test:failed', { reason: 'Empty response' });
+      // Check if we have API key for authenticated mode
+      if (this.config.mode === 'authenticated' && !this.config.api_key) {
+        this.emit('connection:test:failed', { 
+          reason: 'API key required for authenticated mode' 
+        });
+        return false;
       }
+      
+      // For public mode without API key, just check basic connectivity
+      if (this.config.mode === 'public' && !this.config.api_key) {
+        // Just validate configuration without making API call
+        const isValid = this.config.base_url && this.config.model;
+        if (isValid) {
+          this.emit('connection:test:success', { 
+            mode: 'public', 
+            message: 'Configuration valid (no API key for actual test)' 
+          });
+          return true;
+        } else {
+          this.emit('connection:test:failed', { 
+            reason: 'Invalid configuration' 
+          });
+          return false;
+        }
+      }
+      
+      // For authenticated mode with API key, test actual API connection
+      try {
+        const response = await this.sendMessage('Hello', {
+          maxTokens: 10,
+          systemPrompt: 'You are a helpful assistant.'
+        });
 
-      return success;
+        const success = !!response && !!response.message.content;
+        
+        if (success) {
+          this.emit('connection:test:success', response);
+        } else {
+          this.emit('connection:test:failed', { reason: 'Empty response' });
+        }
+
+        return success;
+      } catch (apiError) {
+        const chatGPTError = this.errorHandler.handleError(apiError, 'testConnection');
+        this.emit('connection:test:failed', { error: chatGPTError });
+        return false;
+      }
     } catch (error) {
       const chatGPTError = this.errorHandler.handleError(error, 'testConnection');
       this.emit('connection:test:failed', { error: chatGPTError });

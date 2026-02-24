@@ -294,16 +294,19 @@ export class ChatGPTAPIClient extends EventEmitter {
   /**
    * Check API status
    */
-  async checkStatus(): Promise<{ status: string; version?: string }> {
+  async checkStatus(): Promise<{ status: string; version?: string; error?: string }> {
     try {
       const response = await this.request({
         method: 'GET',
         url: '/v1/models',
         timeout: 5000
       });
-      return { status: 'online', version: response.data?.version };
-    } catch (error) {
-      return { status: 'offline' };
+      return { status: 'online', version: response?.version };
+    } catch (error: any) {
+      return { 
+        status: 'offline', 
+        error: error.message || 'Unknown error'
+      };
     }
   }
 
