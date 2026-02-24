@@ -21,6 +21,7 @@
 
 ### Installation
 
+#### For macOS/Linux:
 ```bash
 # Method 1: One-line install from GitHub source (Recommended)
 # Installs from GitHub, CLI command: freeapi (no hyphen)
@@ -39,10 +40,32 @@ npm run build
 npm link
 ```
 
+#### For Windows:
+```powershell
+# Method 1: Using PowerShell (Recommended)
+# Run PowerShell as Administrator
+irm https://raw.githubusercontent.com/naturecode-official/freeapi/main/install-freeapi.ps1 | iex
+
+# Method 2: Using curl in Command Prompt
+# First install curl or use built-in Windows curl
+curl -fsSL https://raw.githubusercontent.com/naturecode-official/freeapi/main/install-freeapi-win.bat -o install.bat && install.bat
+
+# Method 3: Install from npm
+npm install -g @cuijy/free-api
+
+# Method 4: Manual install
+git clone https://github.com/naturecode-official/freeapi.git
+cd freeapi
+npm install
+npm run build
+npm link
+```
+
 ### Get Started in 30 Seconds
 
-**Important**: CLI command differs based on installation source:
+**Important**: CLI command differs based on installation source and platform:
 
+#### For macOS/Linux:
 ```bash
 # If installed from GitHub (Method 1 & 2):
 freeapi init           # CLI command: freeapi (no hyphen)
@@ -53,6 +76,16 @@ freeapi chat chatgpt
 free-api init          # CLI command: free-api (with hyphen)
 free-api config chatgpt
 free-api chat chatgpt
+```
+
+#### For Windows:
+```batch
+# If installed from GitHub or npm:
+freeapi init           # CLI command: freeapi (no hyphen)
+freeapi config chatgpt
+freeapi chat chatgpt
+
+# Note: On Windows, both installation methods use 'freeapi' command
 ```
 
 
@@ -253,13 +286,15 @@ npm link
 
 ## 📦 Installation Methods
 
-### Method 1: One-line install from GitHub (Easiest)
+### For macOS/Linux:
+
+#### Method 1: One-line install from GitHub (Easiest)
 ```bash
 # Installs from GitHub source, CLI: freeapi (no hyphen)
 curl -fsSL https://raw.githubusercontent.com/naturecode-official/freeapi/main/install-freeapi | bash
 ```
 
-### Method 2: Manual install from GitHub
+#### Method 2: Manual install from GitHub
 ```bash
 # CLI: freeapi (no hyphen)
 git clone https://github.com/naturecode-official/freeapi.git
@@ -267,13 +302,42 @@ cd freeapi
 ./install-global.sh
 ```
 
-### Method 3: Install from npm
+#### Method 3: Install from npm
 ```bash
 # CLI: free-api (with hyphen)
 npm install -g @cuijy/free-api
 ```
 
-### Method 4: Docker (Coming Soon)
+### For Windows:
+
+#### Method 1: PowerShell (Recommended)
+```powershell
+# Run PowerShell as Administrator
+irm https://raw.githubusercontent.com/naturecode-official/freeapi/main/install-freeapi.ps1 | iex
+```
+
+#### Method 2: Command Prompt with curl
+```batch
+curl -fsSL https://raw.githubusercontent.com/naturecode-official/freeapi/main/install-freeapi-win.bat -o install.bat && install.bat
+```
+
+#### Method 3: Install from npm
+```batch
+npm install -g @cuijy/free-api
+```
+
+#### Method 4: Manual install
+```batch
+git clone https://github.com/naturecode-official/freeapi.git
+cd freeapi
+npm install
+npm run build
+npm link
+```
+
+### Cross-Platform:
+
+#### Docker (Coming Soon)
 ```bash
 docker pull naturecode/freeapi
 docker run -it naturecode/freeapi freeapi --help
