@@ -1,6 +1,6 @@
 # FreeAPI 🤖
 
-[![npm version](https://img.shields.io/npm/v/freeapi.svg)](https://www.npmjs.com/package/freeapi)
+[![npm version](https://img.shields.io/npm/v/@cuijy/free-api.svg)](https://www.npmjs.com/package/@cuijy/free-api)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Node.js Version](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen.svg)](https://nodejs.org/)
 
@@ -22,10 +22,12 @@
 ### Installation
 
 ```bash
-# Install globally from npm
-npm install -g freeapi
+# Install globally from npm (published package)
+# CLI command: free-api (with hyphen)
+npm install -g @cuijy/free-api
 
-# Or from source
+# Or from source (development version)
+# CLI command: freeapi (no hyphen)
 git clone https://github.com/naturecode-official/freeapi.git
 cd freeapi
 npm install
@@ -35,15 +37,110 @@ npm link
 
 ### Get Started in 30 Seconds
 
+**Note**: Command differs based on installation method:
+
 ```bash
-# 1. Initialize FreeAPI
-freeapi init
+# If installed from npm (@cuijy/free-api):
+free-api init          # CLI command has hyphen
+free-api config chatgpt
+free-api chat chatgpt
 
-# 2. Configure ChatGPT (interactive wizard)
+# If installed from source (development):
+freeapi init           # CLI command has no hyphen
 freeapi config chatgpt
-
-# 3. Start chatting!
 freeapi chat chatgpt
+```
+
+### Quick Test with curl
+
+Want to quickly test if the service is running? Use curl:
+
+```bash
+# Test if npm package exists
+curl -s "https://registry.npmjs.org/@cuijy/free-api" | jq '._id'
+
+# Test specific version
+curl -s "https://registry.npmjs.org/@cuijy/free-api/0.1.2" | jq '.version'
+
+# Test GitHub API
+curl -s "https://api.github.com/repos/naturecode-official/freeapi" | jq '.name'
+
+# If you don't have jq, use grep
+curl -s "https://registry.npmjs.org/@cuijy/free-api" | grep -o '"name":"[^"]*"'
+```
+
+### Verify Installation
+
+```bash
+# After installing from npm:
+free-api --version
+free-api list
+free-api status
+
+# After installing from source:
+freeapi --version
+freeapi list
+freeapi status
+
+# Test the service directly (npm version shown)
+echo "Hello" | free-api chat chatgpt --stdin
+```
+
+## 🧪 Testing & Verification
+
+### API Testing with curl
+
+```bash
+# Test npm registry API
+curl -s "https://registry.npmjs.org/@cuijy/free-api" \
+  | python3 -c "import json,sys;d=json.load(sys.stdin);print(f'Package: {d.get(\"_id\")}\nLatest: {d.get(\"dist-tags\",{}).get(\"latest\")}')"
+
+# Test specific version details
+curl -s "https://registry.npmjs.org/@cuijy/free-api/0.1.2" \
+  | python3 -c "import json,sys;d=json.load(sys.stdin);print(f'Version: {d.get(\"version\")}\nDescription: {d.get(\"description\")}')"
+
+# Test GitHub repository
+curl -s "https://api.github.com/repos/naturecode-official/freeapi" \
+  | python3 -c "import json,sys;d=json.load(sys.stdin);print(f'Repo: {d.get(\"name\")}\nStars: {d.get(\"stargazers_count\")}\nForks: {d.get(\"forks_count\")}')"
+
+# Simple grep version (no Python required)
+curl -s "https://registry.npmjs.org/@cuijy/free-api" | grep -o '"description":"[^"]*"'
+```
+
+### Local Testing
+
+```bash
+# Build and test from source
+git clone https://github.com/naturecode-official/freeapi.git
+cd freeapi
+npm install
+npm run build
+
+# Run all tests
+npm test
+
+# Run specific test file
+npm test -- test-file.test.js
+
+# Test CLI functionality
+node dist/index.js --help
+node dist/index.js list
+```
+
+### Integration Testing
+
+```bash
+# Test service startup (npm version shown, use freeapi for source)
+free-api start chatgpt --test
+
+# Test configuration
+free-api config chatgpt --test
+
+# Test chat functionality (non-interactive)
+echo "Hello, how are you?" | free-api chat chatgpt --stdin
+
+# Test error handling
+free-api config nonexistent-service
 ```
 
 ## 📖 Documentation
@@ -51,27 +148,27 @@ freeapi chat chatgpt
 ### Basic Commands
 
 ```bash
-# Initialize configuration
-freeapi init
+# Initialize configuration (npm: free-api, source: freeapi)
+free-api init
 
 # List available services
-freeapi list
+free-api list
 
 # Configure a specific service
-freeapi config chatgpt
-freeapi config deepseek
+free-api config chatgpt
+free-api config deepseek
 
 # Start interactive chat
-freeapi chat chatgpt
+free-api chat chatgpt
 
 # Check service status
-freeapi status
+free-api status
 
 # View logs
-freeapi logs
+free-api logs
 
 # Stop services
-freeapi stop
+free-api stop
 ```
 
 ### ChatGPT Service
@@ -90,14 +187,14 @@ FreeAPI comes with a fully-featured ChatGPT service:
 # Run the interactive configuration wizard
 freeapi config chatgpt
 
-# Or configure manually
-node -e "require('freeapi/dist/services/chatgpt/exports').runConfigWizard()"
+# Or configure manually (npm: @cuijy/free-api, source: freeapi)
+node -e "require('@cuijy/free-api/dist/services/chatgpt/exports').runConfigWizard()"
 ```
 
 #### Example Usage:
 ```javascript
-// Programmatic usage
-const { createChatGPTService } = require('freeapi/dist/services/chatgpt/exports');
+// Programmatic usage (npm: @cuijy/free-api, source: freeapi)
+const { createChatGPTService } = require('@cuijy/free-api/dist/services/chatgpt/exports');
 
 async function chat() {
   const chatGPT = createChatGPTService();
@@ -187,7 +284,7 @@ npm link
 
 ### Method 1: npm (Recommended)
 ```bash
-npm install -g freeapi
+npm install -g @cuijy/free-api
 ```
 
 ### Method 2: From Source
@@ -294,6 +391,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
   
 **Made with ❤️ by NatureCode**
 
-[GitHub](https://github.com/naturecode-official) • [npm](https://www.npmjs.com/package/freeapi) • [Report Bug](https://github.com/naturecode-official/freeapi/issues)
+[GitHub](https://github.com/naturecode-official/freeapi) • [npm](https://www.npmjs.com/package/@cuijy/free-api) • [Report Bug](https://github.com/naturecode-official/freeapi/issues)
 
 </div>
