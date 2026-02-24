@@ -4,14 +4,24 @@ Simple CLI tool to access free AI chat services.
 
 ## Installation
 
+### Simple Method (Recommended):
 ```bash
-# Download and install
-curl -s https://raw.githubusercontent.com/naturecode-official/freeapi/main/install.sh | bash
-
-# Or manually:
 curl -O https://raw.githubusercontent.com/naturecode-official/freeapi/main/index.js
 chmod +x index.js
 sudo mv index.js /usr/local/bin/freeapi
+```
+
+### Alternative Method:
+```bash
+# Download and run directly
+curl -s https://raw.githubusercontent.com/naturecode-official/freeapi/main/index.js -o freeapi.js
+chmod +x freeapi.js
+./freeapi.js --help
+
+# Or install to your local bin
+mkdir -p ~/.local/bin
+mv freeapi.js ~/.local/bin/freeapi
+export PATH="$HOME/.local/bin:$PATH"
 ```
 
 ## Usage

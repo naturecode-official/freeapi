@@ -1,30 +1,26 @@
 #!/bin/bash
-echo "Installing FreeAPI..."
+echo "FreeAPI Installer"
+echo "================="
 echo ""
 
-# Check if curl is available
-if ! command -v curl &> /dev/null; then
-    echo "Error: curl is required. Please install curl first."
-    exit 1
-fi
-
-# Download directly
+# Download the script
 echo "Downloading FreeAPI..."
-curl -s https://raw.githubusercontent.com/naturecode-official/freeapi/main/index.js -o freeapi
+curl -s https://raw.githubusercontent.com/naturecode-official/freeapi/main/index.js -o freeapi.js
 
 # Make executable
-chmod +x freeapi
+chmod +x freeapi.js
 
 echo ""
-echo "✅ FreeAPI downloaded successfully!"
+echo "✅ Download complete!"
 echo ""
 echo "To use FreeAPI:"
-echo "  1. Move it to a directory in your PATH:"
-echo "     sudo mv freeapi /usr/local/bin/"
-echo "  2. Or run it directly:"
-echo "     ./freeapi --help"
+echo "  ./freeapi.js --help    # Run directly"
 echo ""
-echo "Basic usage:"
-echo "  ./freeapi --help    # Show help"
-echo "  ./freeapi list      # List services"
-echo "  ./freeapi chat      # Start chat"
+echo "To install globally:"
+echo "  sudo mv freeapi.js /usr/local/bin/freeapi"
+echo ""
+echo "Or install to your user directory:"
+echo "  mkdir -p ~/.local/bin"
+echo "  mv freeapi.js ~/.local/bin/freeapi"
+echo "  echo 'export PATH=\"\$HOME/.local/bin:\$PATH\"' >> ~/.bashrc  # or ~/.zshrc"
+echo ""
