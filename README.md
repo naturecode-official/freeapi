@@ -33,6 +33,22 @@ cd freeapi
 npm install
 npm run build
 npm link
+
+# Alternative: Download with curl (no git required)
+curl -L -o freeapi-main.zip https://github.com/naturecode-official/freeapi/archive/refs/heads/main.zip
+unzip freeapi-main.zip
+cd freeapi-main
+npm install
+npm run build
+npm link
+
+# Or download specific release
+curl -L -o freeapi-v0.2.0.tar.gz https://github.com/naturecode-official/freeapi/archive/refs/tags/v0.2.0.tar.gz
+tar -xzf freeapi-v0.2.0.tar.gz
+cd freeapi-0.2.0
+npm install
+npm run build
+npm link
 ```
 
 ### Get Started in 30 Seconds
@@ -51,23 +67,7 @@ freeapi config chatgpt
 freeapi chat chatgpt
 ```
 
-### Quick Test with curl
 
-Want to quickly test if the service is running? Use curl:
-
-```bash
-# Test if npm package exists
-curl -s "https://registry.npmjs.org/@cuijy/free-api" | jq '._id'
-
-# Test specific version
-curl -s "https://registry.npmjs.org/@cuijy/free-api/0.1.2" | jq '.version'
-
-# Test GitHub API
-curl -s "https://api.github.com/repos/naturecode-official/freeapi" | jq '.name'
-
-# If you don't have jq, use grep
-curl -s "https://registry.npmjs.org/@cuijy/free-api" | grep -o '"name":"[^"]*"'
-```
 
 ### Verify Installation
 
@@ -88,24 +88,7 @@ echo "Hello" | free-api chat chatgpt --stdin
 
 ## 🧪 Testing & Verification
 
-### API Testing with curl
 
-```bash
-# Test npm registry API
-curl -s "https://registry.npmjs.org/@cuijy/free-api" \
-  | python3 -c "import json,sys;d=json.load(sys.stdin);print(f'Package: {d.get(\"_id\")}\nLatest: {d.get(\"dist-tags\",{}).get(\"latest\")}')"
-
-# Test specific version details
-curl -s "https://registry.npmjs.org/@cuijy/free-api/0.1.2" \
-  | python3 -c "import json,sys;d=json.load(sys.stdin);print(f'Version: {d.get(\"version\")}\nDescription: {d.get(\"description\")}')"
-
-# Test GitHub repository
-curl -s "https://api.github.com/repos/naturecode-official/freeapi" \
-  | python3 -c "import json,sys;d=json.load(sys.stdin);print(f'Repo: {d.get(\"name\")}\nStars: {d.get(\"stargazers_count\")}\nForks: {d.get(\"forks_count\")}')"
-
-# Simple grep version (no Python required)
-curl -s "https://registry.npmjs.org/@cuijy/free-api" | grep -o '"description":"[^"]*"'
-```
 
 ### Local Testing
 
@@ -287,14 +270,29 @@ npm link
 npm install -g @cuijy/free-api
 ```
 
-### Method 2: From Source
+### Method 2: From Source (git clone)
 ```bash
 git clone https://github.com/naturecode-official/freeapi.git
 cd freeapi
 ./install-global.sh
 ```
 
-### Method 3: Docker (Coming Soon)
+### Method 3: curl Download (no git required)
+```bash
+# Download latest main branch
+curl -L -o freeapi.zip https://github.com/naturecode-official/freeapi/archive/refs/heads/main.zip
+unzip freeapi.zip
+cd freeapi-main
+npm install && npm run build && npm link
+
+# Or download specific version
+curl -L -o freeapi.tar.gz https://github.com/naturecode-official/freeapi/archive/refs/tags/v0.2.0.tar.gz
+tar -xzf freeapi.tar.gz
+cd freeapi-0.2.0
+npm install && npm run build && npm link
+```
+
+### Method 4: Docker (Coming Soon)
 ```bash
 docker pull naturecode/freeapi
 docker run -it naturecode/freeapi freeapi --help
