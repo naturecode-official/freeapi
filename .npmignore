@@ -1,0 +1,72 @@
+# Source files (compiled to dist/)
+src/
+
+# Development files
+*.ts
+*.tsbuildinfo
+
+# Tests
+tests/
+test-*.js
+jest.config.js
+
+# Documentation (except README)
+docs/
+QUICKSTART.md
+plan.md
+AGENTS.md
+CONTRIBUTING.md
+INSTALL.md
+INSTALLATION.md
+
+# Scripts
+*.sh
+*.ps1
+demo.sh
+install.sh
+install-freeapi
+install.ps1
+install-global.sh
+
+# Configs
+configs/
+.eslintrc.json
+.prettierrc.json
+.npmrc
+tsconfig.json
+
+# Git
+.gitignore
+.github/
+
+# Node modules
+node_modules/
+
+# Build artifacts
+dist/**/*.test.js
+dist/**/*.spec.js
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+tmp/
+temp/
+
+# User configuration
+*.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
