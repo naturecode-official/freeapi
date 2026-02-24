@@ -1,0 +1,39 @@
+#!/bin/bash
+# Simple FreeAPI installer
+# Usage: curl -s https://raw.githubusercontent.com/naturecode-official/freeapi/main/install-simple | bash
+
+echo "Installing FreeAPI..."
+echo ""
+
+# Download
+curl -s https://raw.githubusercontent.com/naturecode-official/freeapi/main/index.js -o /tmp/freeapi.js
+
+# Make executable
+chmod +x /tmp/freeapi.js
+
+# Try to install to /usr/local/bin (requires sudo)
+if command -v sudo &> /dev/null; then
+    echo "Installing to /usr/local/bin/ (requires sudo password)..."
+    sudo mv /tmp/freeapi.js /usr/local/bin/freeapi 2>/dev/null
+    if [ $? -eq 0 ]; then
+        echo "✅ Installed to /usr/local/bin/freeapi"
+        echo "Usage: freeapi --help"
+    else
+        echo "⚠ Could not install to /usr/local/bin (no sudo access)"
+        echo "Installing to ~/.local/bin instead..."
+        mkdir -p ~/.local/bin
+        mv /tmp/freeapi.js ~/.local/bin/freeapi
+        echo "✅ Installed to ~/.local/bin/freeapi"
+        echo "Add to PATH: export PATH=\"\$HOME/.local/bin:\$PATH\""
+        echo "Then use: freeapi --help"
+    fi
+else
+    echo "Installing to current directory..."
+    mv /tmp/freeapi.js ./freeapi
+    echo "✅ Installed to ./freeapi"
+    echo "Usage: ./freeapi --help"
+fi
+
+echo ""
+echo "Quick test:"
+freeapi --version 2>/dev/null || ./freeapi --version 2>/dev/null || echo "Run the command above to test"
