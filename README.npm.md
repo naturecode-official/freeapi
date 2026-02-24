@@ -45,6 +45,21 @@ free-api config chatgpt
 free-api chat chatgpt
 ```
 
+### Quick Verification
+
+```bash
+# Test npm package installation
+curl -s "https://registry.npmjs.org/@cuijy/free-api/latest" | grep -o '"version":"[^"]*"'
+
+# Verify your installation
+free-api --version
+free-api --help
+
+# Quick service test
+free-api list
+free-api status
+```
+
 ## 📖 Documentation
 
 ### Available Commands

@@ -46,6 +46,93 @@ freeapi config chatgpt
 freeapi chat chatgpt
 ```
 
+### Quick Test with curl
+
+Want to quickly test if the service is running? Use curl:
+
+```bash
+# Test if npm package exists
+curl -s "https://registry.npmjs.org/@cuijy/free-api" | jq '._id'
+
+# Test specific version
+curl -s "https://registry.npmjs.org/@cuijy/free-api/0.1.2" | jq '.version'
+
+# Test GitHub API
+curl -s "https://api.github.com/repos/naturecode-official/freeapi" | jq '.name'
+
+# If you don't have jq, use grep
+curl -s "https://registry.npmjs.org/@cuijy/free-api" | grep -o '"name":"[^"]*"'
+```
+
+### Verify Installation
+
+```bash
+# After installing, verify with curl-like commands
+freeapi --version
+freeapi list
+freeapi status
+
+# Or test the service directly
+echo "Hello" | freeapi chat chatgpt --stdin
+```
+
+## 🧪 Testing & Verification
+
+### API Testing with curl
+
+```bash
+# Test npm registry API
+curl -s "https://registry.npmjs.org/@cuijy/free-api" \
+  | python3 -c "import json,sys;d=json.load(sys.stdin);print(f'Package: {d.get(\"_id\")}\nLatest: {d.get(\"dist-tags\",{}).get(\"latest\")}')"
+
+# Test specific version details
+curl -s "https://registry.npmjs.org/@cuijy/free-api/0.1.2" \
+  | python3 -c "import json,sys;d=json.load(sys.stdin);print(f'Version: {d.get(\"version\")}\nDescription: {d.get(\"description\")}')"
+
+# Test GitHub repository
+curl -s "https://api.github.com/repos/naturecode-official/freeapi" \
+  | python3 -c "import json,sys;d=json.load(sys.stdin);print(f'Repo: {d.get(\"name\")}\nStars: {d.get(\"stargazers_count\")}\nForks: {d.get(\"forks_count\")}')"
+
+# Simple grep version (no Python required)
+curl -s "https://registry.npmjs.org/@cuijy/free-api" | grep -o '"description":"[^"]*"'
+```
+
+### Local Testing
+
+```bash
+# Build and test from source
+git clone https://github.com/naturecode-official/freeapi.git
+cd freeapi
+npm install
+npm run build
+
+# Run all tests
+npm test
+
+# Run specific test file
+npm test -- test-file.test.js
+
+# Test CLI functionality
+node dist/index.js --help
+node dist/index.js list
+```
+
+### Integration Testing
+
+```bash
+# Test service startup
+freeapi start chatgpt --test
+
+# Test configuration
+freeapi config chatgpt --test
+
+# Test chat functionality (non-interactive)
+echo "Hello, how are you?" | freeapi chat chatgpt --stdin
+
+# Test error handling
+freeapi config nonexistent-service
+```
+
 ## 📖 Documentation
 
 ### Basic Commands

@@ -32,6 +32,9 @@
 ```bash
 # 自动切换到 npm 配置并发布
 ./publish.sh npm
+
+# 验证发布
+curl -s "https://registry.npmjs.org/@cuijy/free-api/latest" | grep -o '"version":"[^"]*"'
 ```
 
 ### 开发（使用 GitHub 配置）
@@ -126,4 +129,11 @@ npm run build
 确保有正确的 npm 令牌：
 ```bash
 echo "//registry.npmjs.org/:_authToken=YOUR_TOKEN" > ~/.npmrc
+
+# 测试令牌
+npm whoami
+
+# 测试发布权限
+curl -s -H "Authorization: Bearer $(grep -o 'npm_[^"]*' ~/.npmrc)" \
+  "https://registry.npmjs.org/-/whoami"
 ```
