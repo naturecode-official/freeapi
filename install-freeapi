@@ -1,14 +1,14 @@
 #!/bin/bash
 
-# FreeAPI One-Click Installer
-# Installs from GitHub source (open source)
+# FreeAPI One-Click Installer (Fixed Version)
+# Installs from GitHub source to permanent location
 # Usage: curl -fsSL https://raw.githubusercontent.com/naturecode-official/freeapi/main/install-freeapi | bash
 
 set -e
 
-echo "FreeAPI One-Click Installer"
-echo "==========================="
-echo "Installing from GitHub source (open source)"
+echo "FreeAPI One-Click Installer (Fixed)"
+echo "==================================="
+echo "Installing from GitHub source to permanent location"
 echo
 
 # Check Node.js
@@ -37,21 +37,29 @@ echo "   Node.js: v$NODE_VERSION"
 echo "   npm: $(npm --version)"
 echo
 
-# Download and install from GitHub
-echo "Downloading FreeAPI from GitHub..."
-TEMP_DIR=$(mktemp -d)
+# Create permanent installation directory
+INSTALL_DIR="$HOME/.freeapi-install"
+echo "Installing FreeAPI to: $INSTALL_DIR"
+mkdir -p "$INSTALL_DIR"
 
+# Download from GitHub
+echo "Downloading FreeAPI from GitHub..."
 if command -v git &> /dev/null; then
     echo "   Cloning repository with git..."
-    git clone --depth 1 https://github.com/naturecode-official/freeapi.git "$TEMP_DIR/freeapi"
+    if [ -d "$INSTALL_DIR/freeapi" ]; then
+        cd "$INSTALL_DIR/freeapi"
+        git pull --quiet
+    else
+        git clone --depth 1 https://github.com/naturecode-official/freeapi.git "$INSTALL_DIR/freeapi"
+    fi
 else
     echo "   Downloading with curl..."
-    curl -L https://github.com/naturecode-official/freeapi/archive/refs/heads/main.tar.gz -o "$TEMP_DIR/freeapi.tar.gz"
-    mkdir -p "$TEMP_DIR/freeapi"
-    tar -xzf "$TEMP_DIR/freeapi.tar.gz" -C "$TEMP_DIR/freeapi" --strip-components=1
+    curl -L https://github.com/naturecode-official/freeapi/archive/refs/heads/main.tar.gz -o "$INSTALL_DIR/freeapi.tar.gz"
+    tar -xzf "$INSTALL_DIR/freeapi.tar.gz" -C "$INSTALL_DIR" --strip-components=1
+    rm -f "$INSTALL_DIR/freeapi.tar.gz"
 fi
 
-cd "$TEMP_DIR/freeapi"
+cd "$INSTALL_DIR/freeapi"
 
 echo "   Installing dependencies..."
 npm install --silent
@@ -59,18 +67,17 @@ npm install --silent
 echo "   Building project..."
 npm run build --silent
 
-echo "   Installing globally..."
+echo "   Creating global link..."
+# Remove any existing link
+npm unlink -g freeapi 2>/dev/null || true
+# Create new link
 npm link --silent
-
-# Clean up
-cd ~
-rm -rf "$TEMP_DIR"
 
 echo
 echo "Installation complete!"
 echo
 echo "Usage:"
-echo "  freeapi --help     Show help (note: command has NO hyphen)"
+echo "  freeapi --help     Show help"
 echo "  freeapi init       Initialize configuration"
 echo "  freeapi list       List available services"
 echo
@@ -79,7 +86,8 @@ echo "  1. freeapi init"
 echo "  2. freeapi config chatgpt"
 echo "  3. freeapi chat chatgpt"
 echo
+echo "Installation directory: $INSTALL_DIR/freeapi"
 echo "GitHub: https://github.com/naturecode-official/freeapi"
 echo "Issues: https://github.com/naturecode-official/freeapi/issues"
 echo
-echo "Note: Installed from GitHub source. CLI command is 'freeapi' (no hyphen)."
+echo "To update FreeAPI, run this installer again."
